@@ -64,7 +64,7 @@ jobs:
       attempt: ${{ steps.retained.outputs.attempt }}
       version: ${{ steps.settings.outputs.version }}
       mode: ${{ steps.settings.outputs.mode }}
-    runs-on: [self-hosted, macOS, ARM64, dsh-mac-package-trial]
+    runs-on: [self-hosted, macOS, X64, dsh-mac-package-trial]
     timeout-minutes: 180
     defaults:
       run:

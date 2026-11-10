@@ -123,11 +123,7 @@ jobs:
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
     
-      - name: Validate preset and resolve build version
-        id: settings
-        env:
-          PACKAGE_BUILD_VERSION: ${{ inputs.build_version }}
-        run: node apps/desktop/scripts/prepare-macos-ci.mjs
+     
       - name: Check packaging configuration and toolchain
         env:
           PACKAGE_VERSION: ${{ steps.settings.outputs.version }}

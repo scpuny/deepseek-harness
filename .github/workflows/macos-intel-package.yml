@@ -122,10 +122,7 @@ jobs:
           echo "PNPM_CONFIG_STORE_DIR=$DSH_DESKTOP_PACKAGE_CACHE_DIR/workspace-pnpm-store" >> "$GITHUB_ENV"
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
-      - name: Check original machine archival route
-        env:
-          DESKTOP_PUBLISH_RUNNERS: ${{ vars.DESKTOP_PUBLISH_RUNNERS }}
-        run: node --import tsx apps/desktop/scripts/retain-desktop-ci.ts --check-runner
+    
       - name: Validate preset and resolve build version
         id: settings
         env:

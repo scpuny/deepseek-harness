@@ -130,7 +130,7 @@ jobs:
         run: |
           args=()
           if [[ "$PACKAGE_SKIP_NOTARIZATION" = true ]]; then args+=(--skip-notarization); fi
-          pnpm run package:desktop:mac:x64 --check --build-version "$PACKAGE_VERSION" "${args[@]}"
+          pnpm run package:desktop:mac:x64 --check --build-version 0.2.2-local "${args[@]}"
       - name: Build and stage notarized Computer Use helpers
         run: |
           if ! node -e "process.exit(require('./apps/cli/package.json').dependencies?.['@deepseek-ai/dsh-cua-bundle'] ? 0 : 1)"; then

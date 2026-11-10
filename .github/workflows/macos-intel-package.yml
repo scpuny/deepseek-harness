@@ -23,7 +23,8 @@ jobs:
           target: x86_64-apple-darwin
 
       - name: Install pnpm
-        run: npm install -g pnpm
+        if: matrix.os == 'macos-13'
+        run: npm install -g pnpm@11.28.5
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

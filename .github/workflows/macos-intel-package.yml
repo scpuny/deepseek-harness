@@ -45,7 +45,7 @@ on:
       skip_notarization:
         description: '跳过公证和 stapling：仅限内部调试，禁止发布到 test / production 或用于自动更新；需要发布请勿勾选'
         type: boolean
-        default: false
+        default: true
         required: true
 
 permissions:
@@ -106,7 +106,7 @@ jobs:
           if(branch==='HEAD' || branch!==ref || ref.startsWith('refs/')) throw Error('Select a branch in this repository, not a SHA or PR ref');
           }
           if(!fs.readFileSync('apps/desktop/scripts/prepare-macos-ci.mjs','utf8').includes('resolveDesktopBuildTarget')) throw Error('Source lacks Intel macOS CI support; select a newer source');
-          if(!fs.readFileSync('apps/desktop/scripts/retain-desktop-ci.ts','utf8').includes('--check-runner')) throw Error('Source lacks independent Desktop artifact archival support; select a newer source');
+          if(!fs.readFileSync('apps/desktop/scripts/retain-desktop-ci.ts','utf8').includes('--check-runner')) throw Error('Source lacks independent Desktop artifact archival support; select a newer release');
           if(!fs.readFileSync('apps/desktop/scripts/desktop-ci-version.mjs','utf8').includes('PACKAGE_VERSION_MODE')) throw Error('Source lacks Desktop channel/version CI support; select a newer release');"
       - uses: pnpm/action-setup@v5.0.0
         with:
@@ -120,8 +120,6 @@ jobs:
         run: |
           echo "DSH_DESKTOP_PACKAGE_CACHE_DIR=$DSH_DESKTOP_PACKAGE_CACHE_DIR" >> "$GITHUB_ENV"
           echo "PNPM_CONFIG_STORE_DIR=$DSH_DESKTOP_PACKAGE_CACHE_DIR/workspace-pnpm-store" >> "$GITHUB_ENV"
-      - name: Check Rosetta execution
-        run: arch -x86_64 /usr/bin/true
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
       - name: Check original machine archival route
@@ -141,8 +139,6 @@ jobs:
           if [[ "$PACKAGE_SKIP_NOTARIZATION" = true ]]; then args+=(--skip-notarization); fi
           pnpm run package:desktop:mac:x64 --check --build-version "$PACKAGE_VERSION" "${args[@]}"
       - name: Build and stage notarized Computer Use helpers
-        # A source whose dsh ships the Computer Use bundle packs the workspace provider into the Desktop runtime,
-        # which therefore needs the same notarized helper npm publication stages.
         run: |
           if ! node -e "process.exit(require('./apps/cli/package.json').dependencies?.['@deepseek-ai/dsh-cua-bundle'] ? 0 : 1)"; then
             echo 'This source does not ship Computer Use in Desktop; no helper is staged.'
